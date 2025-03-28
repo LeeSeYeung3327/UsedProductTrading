@@ -2,11 +2,8 @@ package com.dcu.test.product;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 import java.util.Optional;
@@ -72,5 +69,12 @@ public class ProductController {
         // DB 에서 해달 데이터 삭제
         productService.productDelete(product.getId());
         return "redirect:/productList";
+    }
+
+    @GetMapping("/roadWeather")
+    @ResponseBody
+    public String fetchExternalData() {
+        // ProductService에서 fetchDataFromExternalApi 호출
+        return productService.fetchDataFromExternalApi();
     }
 }
