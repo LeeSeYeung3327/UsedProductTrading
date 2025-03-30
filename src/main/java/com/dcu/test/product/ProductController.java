@@ -71,10 +71,4 @@ public class ProductController {
         return "redirect:/productList";
     }
 
-    @GetMapping("/roadWeather")
-    @ResponseBody
-    public String fetchExternalData() {
-        // ProductService에서 fetchDataFromExternalApi 호출
-        return productService.fetchDataFromExternalApi();
-    }
 }

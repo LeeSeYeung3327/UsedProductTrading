@@ -1,15 +1,19 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm px-4" th:fragment="header"
+<nav class="navbar navbar-expand-lg shadow-sm px-4" th:fragment="header"
      xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
     <div class="container-fluid">
         <!-- 로고 -->
         <a class="navbar-brand d-flex align-items-center" href="/">
-            <img src="/images/img-hana-symbol.png" alt="MyShop 로고" width="40" height="40" class="me-2">
-            <span class="fw-bold fs-4 text-light">MyShop</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                <path d="M12 8v6"></path>
+                <path d="M9 11h6"></path>
+            </svg>
+            <span class="fw-bold fs-4 text-success">리마켓</span>
         </a>
         <!-- 검색 바 (가운데 정렬) -->
         <form class="d-flex mx-auto" action="/search" method="get" style="max-width: 400px; width: 100%;">
-            <input class="form-control me-2" type="search" name="query" placeholder="상품 검색..." aria-label="검색">
-            <button class="btn btn-outline-light" type="submit">🔍</button>
+            <input class="form-control me-2 border-success" type="search" name="query" placeholder="중고 물품 검색..." aria-label="검색">
+            <button class="btn btn-outline-success" type="submit">🔍</button>
         </form>
 
         <!-- 모바일 메뉴 버튼 -->
@@ -22,23 +26,23 @@
         <div class="collapse navbar-collapse justify-content-end" id="navbarMenu">
             <ul class="navbar-nav align-items-center">
                 <li class="nav-item">
-                    <a class="nav-link text-light fw-semibold px-3" href="/productList">📦 상품 목록</a>
+                    <a class="nav-link text-dark fw-semibold px-3" href="/productList">🛒 물품 목록</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-light fw-semibold px-3" href="/productRegister">➕ 상품 등록</a>
+                    <a class="nav-link text-dark fw-semibold px-3" href="/productRegister">📦 물품 등록</a>
                 </li>
 
                 <!-- 비로그인 상태 -->
                 <li class="nav-item" sec:authorize="isAnonymous()">
-                    <a href="/memberLogin" class="btn btn-outline-light fw-semibold px-3 ms-3">로그인</a>
+                    <a href="/memberLogin" class="btn btn-outline-success fw-semibold px-3 ms-3">로그인</a>
                 </li>
 
                 <!-- 로그인 상태 -->
                 <li class="nav-item d-flex align-items-center" sec:authorize="isAuthenticated()">
-                    <span class="nav-link text-light fw-semibold">👋 <span sec:authentication="name"></span>님</span>
+                    <span class="nav-link text-dark fw-semibold">👋 <span sec:authentication="name"></span>님</span>
                 </li>
                 <li class="nav-item" sec:authorize="isAuthenticated()">
-                    <a href="/memberPage" class="btn btn-outline-primary fw-semibold px-3 ms-3">마이페이지</a>
+                    <a href="/memberPage" class="btn btn-outline-success fw-semibold px-3 ms-3">마이페이지</a>
                 </li>
                 <li class="nav-item" sec:authorize="isAuthenticated()">
                     <form action="/logout" method="post" class="d-inline">
@@ -49,3 +53,4 @@
         </div>
     </div>
 </nav>
+
