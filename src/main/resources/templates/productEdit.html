@@ -38,17 +38,28 @@
         }
         .current-images {
             display: flex;
+            justify-content: center;  /* 이미지 가운데 정렬 */
             gap: 10px;
             margin-bottom: 15px;
             overflow-x: auto;
             padding: 10px 0;
         }
         .image-thumbnail {
-            width: 100px;
-            height: 100px;
+            width: 400px;  /* 이미지 크기 확대 */
+            height: 200px;  /* 이미지 크기 확대 */
             object-fit: cover;
             border-radius: 8px;
             border: 2px solid #ddd;
+        }
+        .input-group {
+            display: flex;
+            justify-content: center;  /* 파일 선택 버튼 가운데 배치 */
+        }
+        .btn-outline-secondary {
+            font-weight: 600;
+        }
+        .form-control-plaintext{
+            text-align: center;
         }
     </style>
 </head>
@@ -63,17 +74,20 @@
             <h1 class="form-title">중고 물품 수정</h1>
             <hr>
         </div>
-        <form action="/productEdit" method="post" class="needs-validation" novalidate>
+        <form action="/productEdit" method="post" class="needs-validation" novalidate enctype="multipart/form-data">
             <input th:value="${product.id}" type="hidden" id="id" name="id">
 
             <div class="mb-4">
-                <label class="form-label">현재 이미지</label>
+                <label class="form-label">이미지 미리보기</label>
                 <div class="current-images">
-                    <img th:src="${product.image}" class="image-thumbnail" alt="물품 이미지">
+                    <!-- 현재 이미지 표시 -->
+                    <img th:src="@{'/upload/images/' + ${product.image}}" class="image-thumbnail" alt="물품 이미지">
                 </div>
                 <div class="input-group">
-                    <input th:value="${product.image}" type="text" class="form-control" id="image" name="image" placeholder="이미지 URL을 입력하거나 파일을 업로드하세요" required>
-                    <button class="btn btn-outline-secondary" type="button">파일 선택</button>
+                    <!-- 파일 업로드를 위한 input 필드 -->
+                    <input type="file" class="form-control d-none" id="image" name="image" accept="image/*" onchange="displayFileName()">
+                    <button class="btn btn-outline-secondary" type="button" onclick="document.getElementById('image').click();">파일 선택</button>
+                    <span id="file-name" class="form-control-plaintext"></span> <!-- 선택된 파일 이름을 표시 -->
                 </div>
             </div>
 
@@ -102,8 +116,8 @@
                     <input th:value="${product.company}" type="text" class="form-control" id="company" name="company">
                 </div>
                 <div class="col-md-6">
-                    <label for="condition" class="form-label">물품 상태</label>
-                    <select th:value="${product.productCondition}" class="form-select" id="condition" name="condition" required>
+                    <label for="productCondition" class="form-label">물품 상태</label>
+                    <select class="form-select" id="productCondition" name="productCondition" required>
                         <option value="new" th:selected="${product.productCondition == 'new'}">새상품</option>
                         <option value="almost_new" th:selected="${product.productCondition == 'almost_new'}">거의 새것</option>
                         <option value="good" th:selected="${product.productCondition == 'good'}">상태 좋음</option>
@@ -129,8 +143,8 @@
             <div class="mb-3">
                 <label class="form-label">거래 방식</label>
                 <select class="form-select" id="tradeMethod" name="tradeMethod" required>
-                    <option value="direct" th:selected="${product.tradeMethod == 'direct'}">직거래</option>
-                    <option value="delivery" th:selected="${product.tradeMethod == 'delivery'}">택배거래</option>
+                    <option value="direct" th:selected="${product.trade_method == 'direct'}">직거래</option>
+                    <option value="delivery" th:selected="${product.trade_method == 'delivery'}">택배거래</option>
                 </select>
             </div>
 
@@ -148,5 +162,20 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script>
+    function displayFileName() {
+        var fileInput = document.getElementById('image');
+        var fileName = fileInput.files[0].name;
+        document.getElementById('file-name').textContent = fileName;  // 선택된 파일 이름 표시
+
+        // 이미지 미리보기
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var imagePreview = document.querySelector('.current-images');
+            imagePreview.innerHTML = `<img src="${e.target.result}" class="image-thumbnail" alt="미리보기 이미지">`;  // 이미지 미리보기 표시
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+    }
+</script>
 </body>
 </html>

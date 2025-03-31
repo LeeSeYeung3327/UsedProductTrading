@@ -106,7 +106,7 @@
             <div class="card product-card h-100">
                 <div class="position-relative">
                     <span class="badge bg-success condition-badge " th:text="${product.productCondition}"></span>
-                    <img th:src="@{${product.image}}" class="card-img-top" alt="물품 이미지">
+                    <img th:src="@{${product.image != null ? product.image : '/default-image.jpg'}}" class="card-img-top" alt="물품 이미지"/>
                 </div>
                 <div class="card-body">
                     <h5 th:text="${product.title}" class="card-title"></h5>

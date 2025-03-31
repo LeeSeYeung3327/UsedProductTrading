@@ -18,7 +18,7 @@ public class Product {
     @Column(columnDefinition = "TEXT")
     private String image;  // 물품 사진 URL
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String title;  // 물품명
 
     @Column(nullable = false)
@@ -30,6 +30,7 @@ public class Product {
     @Column(nullable = false)
     private String productCondition;  // 물품 상태 (예: 새상품, 거의 새것, 상태 좋음, 사용감 있음, 상태 안좋음)
 
+    @Column(nullable = false)
     private Integer price;  // 판매 가격
 
     private LocalDate release_date;  // 구매 시기
