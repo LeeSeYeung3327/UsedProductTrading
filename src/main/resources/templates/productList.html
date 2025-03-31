@@ -82,7 +82,7 @@
 <!-- 네비게이션 바 -->
 <nav th:replace="~{/fragments/header.html :: header}"></nav>
 
-<div class="container py-4">
+<div class="container py-4" style="outline: none; user-select: none;">
     <h1 class="mb-4 text-center header-title">🔄 중고 물품 목록</h1>
 
     <!-- 카테고리 필터 -->
@@ -100,31 +100,22 @@
         </div>
     </div>
 
+    <!-- 상품 목록 동적 출력 -->
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-        <!-- 상품 목록 동적 출력 -->
         <div th:each="product : ${products}" th:onclick="|window.location.href='/productDetail/' + ${product.id}|" class="col">
             <div class="card product-card h-100">
                 <div class="position-relative">
-                    <span class="badge bg-success condition-badge">상태 좋음</span>
+                    <span class="badge bg-success condition-badge " th:text="${product.productCondition}"></span>
                     <img th:src="@{${product.image}}" class="card-img-top" alt="물품 이미지">
                 </div>
                 <div class="card-body">
                     <h5 th:text="${product.title}" class="card-title"></h5>
                     <p th:text="${#numbers.formatInteger(product.price, 3, 'COMMA') + '원'}" class="card-price mb-2"></p>
                     <p class="location-info mb-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
-                            <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
-                            <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-                        </svg>
                         서울시 강남구
                     </p>
                     <p class="seller-info d-flex justify-content-between">
-                        <span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
-                                <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
-                            </svg>
-                            판매자명
-                        </span>
+                        <span>판매자: 00님</span>
                         <span>3일 전</span>
                     </p>
                 </div>
