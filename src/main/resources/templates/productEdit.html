@@ -44,23 +44,41 @@
             overflow-x: auto;
             padding: 10px 0;
         }
-        .image-thumbnail {
-            width: 400px;  /* 이미지 크기 확대 */
-            height: 200px;  /* 이미지 크기 확대 */
-            object-fit: cover;
-            border-radius: 8px;
-            border: 2px solid #ddd;
-        }
-        .input-group {
-            display: flex;
-            justify-content: center;  /* 파일 선택 버튼 가운데 배치 */
-        }
-        .btn-outline-secondary {
-            font-weight: 600;
-        }
-        .form-control-plaintext{
+         .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            padding: 30px;
             text-align: center;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
         }
+        .upload-area:hover {
+            border-color: #4CAF50;
+            background-color: #f8f9fa;
+        }
+        .upload-icon {
+            font-size: 2rem;
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+        .preview-container {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .preview-container img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
     </style>
 </head>
 <body>
@@ -74,20 +92,19 @@
             <h1 class="form-title">중고 물품 수정</h1>
             <hr>
         </div>
+        <!-- Form 시작 -->
         <form action="/productEdit" method="post" class="needs-validation" novalidate enctype="multipart/form-data">
-            <input th:value="${product.id}" type="hidden" id="id" name="id">
-
+            <input type="hidden" name="id" th:value="${product.id}">
             <div class="mb-4">
-                <label class="form-label">이미지 미리보기</label>
-                <div class="current-images">
-                    <!-- 현재 이미지 표시 -->
-                    <img th:src="@{'/upload/images/' + ${product.image}}" class="image-thumbnail" alt="물품 이미지">
-                </div>
-                <div class="input-group">
-                    <!-- 파일 업로드를 위한 input 필드 -->
-                    <input type="file" class="form-control d-none" id="image" name="image" accept="image/*" onchange="displayFileName()">
-                    <button class="btn btn-outline-secondary" type="button" onclick="document.getElementById('image').click();">파일 선택</button>
-                    <span id="file-name" class="form-control-plaintext"></span> <!-- 선택된 파일 이름을 표시 -->
+                <label class="form-label">물품 사진</label>
+                <div class="upload-area" onclick="document.getElementById('image-upload').click()">
+                    <div class="upload-icon">📷</div>
+                    <p class="mb-1">사진을 끌어다 놓거나 클릭하여 업로드하세요</p>
+                    <p class="text-muted small">물품을 설명할 수 있을만한 사진을 넣어주세요</p>
+                    <input type="file" id="image-upload" name="image" class="d-none" multiple accept="image/*"
+                           onchange="previewImages()">
+                    <!-- 미리보기 이미지가 이곳에 표시됩니다 -->
+                    <div class="preview-container" id="image-preview"></div>
                 </div>
             </div>
 
@@ -99,14 +116,14 @@
             <div class="mb-3">
                 <label for="category" class="form-label">카테고리</label>
                 <select class="form-select" id="category" name="category" required>
-                    <option value="digital" th:selected="${product.category == 'digital'}">디지털/IT</option>
-                    <option value="furniture" th:selected="${product.category == 'furniture'}">가구/인테리어</option>
-                    <option value="clothes" th:selected="${product.category == 'clothes'}">의류/잡화</option>
-                    <option value="books" th:selected="${product.category == 'books'}">도서/티켓/음반</option>
-                    <option value="sports" th:selected="${product.category == 'sports'}">스포츠/레저</option>
-                    <option value="beauty" th:selected="${product.category == 'beauty'}">뷰티/미용</option>
-                    <option value="hobby" th:selected="${product.category == 'hobby'}">취미/게임/음반</option>
-                    <option value="etc" th:selected="${product.category == 'etc'}">기타</option>
+                    <option value="디지털/IT" th:selected="${product.category == '디지털/IT'}">디지털/IT</option>
+                    <option value="가구/인테리어" th:selected="${product.category == '가구/인테리어'}">가구/인테리어</option>
+                    <option value="의류/잡화" th:selected="${product.category == '의류/잡화'}">의류/잡화</option>
+                    <option value="도서/티켓/음반" th:selected="${product.category == '도서/티켓/음반'}">도서/티켓/음반</option>
+                    <option value="스포츠/레저" th:selected="${product.category == '스포츠/레저'}">스포츠/레저</option>
+                    <option value="뷰티/미용" th:selected="${product.category == '뷰티/미용'}">뷰티/미용</option>
+                    <option value="취미/게임/음반" th:selected="${product.category == '취미/게임/음반'}">취미/게임/음반</option>
+                    <option value="기타" th:selected="${product.category == '기타'}">기타</option>
                 </select>
             </div>
 
@@ -118,11 +135,11 @@
                 <div class="col-md-6">
                     <label for="productCondition" class="form-label">물품 상태</label>
                     <select class="form-select" id="productCondition" name="productCondition" required>
-                        <option value="new" th:selected="${product.productCondition == 'new'}">새상품</option>
-                        <option value="almost_new" th:selected="${product.productCondition == 'almost_new'}">거의 새것</option>
-                        <option value="good" th:selected="${product.productCondition == 'good'}">상태 좋음</option>
-                        <option value="used" th:selected="${product.productCondition == 'used'}">사용감 있음</option>
-                        <option value="bad" th:selected="${product.productCondition == 'bad'}">상태 안좋음</option>
+                        <option value="새상품" th:selected="${product.productCondition == '새상품'}">새상품</option>
+                        <option value="거의 새거" th:selected="${product.productCondition == '거의 새거'}">거의 새거</option>
+                        <option value="상태 좋음" th:selected="${product.productCondition == '상태 좋음'}">상태 좋음</option>
+                        <option value="사용감 있음" th:selected="${product.productCondition == '사용감 있음'}">사용감 있음</option>
+                        <option value="상태 안좋음" th:selected="${product.productCondition == '상태 안좋음'}">상태 안좋음</option>
                     </select>
                 </div>
             </div>
@@ -142,9 +159,9 @@
 
             <div class="mb-3">
                 <label class="form-label">거래 방식</label>
-                <select class="form-select" id="tradeMethod" name="tradeMethod" required>
-                    <option value="direct" th:selected="${product.trade_method == 'direct'}">직거래</option>
-                    <option value="delivery" th:selected="${product.trade_method == 'delivery'}">택배거래</option>
+                <select class="form-select" id="trade_method" name="trade_method" required>
+                    <option value="직거래" th:selected="${product.trade_method == '직거래'}">직거래</option>
+                    <option value="택배거래" th:selected="${product.trade_method == '택배거래'}">택배거래</option>
                 </select>
             </div>
 
@@ -162,20 +179,41 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
 <script>
-    function displayFileName() {
-        var fileInput = document.getElementById('image');
-        var fileName = fileInput.files[0].name;
-        document.getElementById('file-name').textContent = fileName;  // 선택된 파일 이름 표시
+    function previewImages() {
+    const previewContainer = document.getElementById('image-preview');
+    const fileInput = document.getElementById('image-upload');
+    const uploadArea = document.querySelector('.upload-area');
 
-        // 이미지 미리보기
-        var reader = new FileReader();
+    // 기존 미리보기 초기화
+    previewContainer.innerHTML = '';
+
+    // 업로드 영역 텍스트 숨기기
+    uploadArea.querySelector('.upload-icon').style.display = 'none';
+    uploadArea.querySelector('p').style.display = 'none';
+
+
+    // 파일들을 순회하면서 미리보기 추가
+    Array.from(fileInput.files).forEach(file => {
+        const reader = new FileReader();
         reader.onload = function(e) {
-            var imagePreview = document.querySelector('.current-images');
-            imagePreview.innerHTML = `<img src="${e.target.result}" class="image-thumbnail" alt="미리보기 이미지">`;  // 이미지 미리보기 표시
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.style.width = "550px";  // 미리보기 이미지 크기
+            img.style.height = "250px";
+            img.style.objectFit = "cover";
+            img.style.borderRadius = "5px";
+            img.style.border = "1px solid #ddd";
+            img.style.marginRight = "5px";
+
+            previewContainer.appendChild(img);
         };
-        reader.readAsDataURL(fileInput.files[0]);
-    }
+        reader.readAsDataURL(file);
+    });
+}
 </script>
 </body>
 </html>

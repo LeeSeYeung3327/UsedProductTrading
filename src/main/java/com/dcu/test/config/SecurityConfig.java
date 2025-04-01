@@ -24,12 +24,12 @@ public class SecurityConfig {
                 .loginPage("/memberLogin")
                 .usernameParameter("email")
                 .passwordParameter("password")
-                .defaultSuccessUrl("/")
+                .defaultSuccessUrl("/productList")
                 .permitAll()
         );
 
         httpSecurity.logout(logout->logout
-                .logoutSuccessUrl("/")
+                .logoutSuccessUrl("/productList")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
         );

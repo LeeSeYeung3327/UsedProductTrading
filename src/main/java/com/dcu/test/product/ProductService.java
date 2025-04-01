@@ -38,8 +38,27 @@ public class ProductService {
     }
 
     // 검색 기능 추가
-    public List<Product> searchProducts(String query) {
-        return productRepository.findByTitleContainingOrCompanyContaining(query, query);
+    public List<ProductDTO> productSearch(String keyword) {
+        List<Product> products;
+        if (keyword != null && !keyword.trim().isEmpty()){
+            products = productRepository.findByTitleContainingIgnoreCase(keyword);
+        } else {
+            products = productRepository.findAll();
+        }
+        return products.stream().map(product -> {
+            ProductDTO productDTO = new ProductDTO();
+            productDTO.setId(product.getId());
+            productDTO.setImage(product.getImage());
+            productDTO.setTitle(product.getTitle());
+            productDTO.setCategory(product.getCategory());
+            productDTO.setCompany(product.getCompany());
+            productDTO.setProductCondition(product.getProductCondition());
+            productDTO.setPrice(product.getPrice());
+            productDTO.setRelease_date(product.getRelease_date());
+            productDTO.setTrade_method(product.getTrade_method());
+            productDTO.setDescription(product.getDescription());
+            return productDTO;
+        }).collect(Collectors.toList());
     }
 
     public void productUpdate(ProductUpdateDTO productUpdateDTO){

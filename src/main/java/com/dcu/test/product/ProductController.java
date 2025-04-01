@@ -83,4 +83,12 @@ public class ProductController {
         productService.productDelete(id);
         return "redirect:/productList";
     }
+
+    @GetMapping("/productSearch")
+    String productSearch(String keyword, Model model){
+        List<ProductDTO> products = productService.productSearch(keyword);
+        model.addAttribute("products", products);
+        return "productList";
+    }
+
 }
