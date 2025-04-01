@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import com.dcu.test.member.Member;
 
 @Entity
 @Getter
@@ -18,7 +19,7 @@ public class Product {
     @Column(columnDefinition = "TEXT")
     private String image;  // 물품 사진 URL
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String title;  // 물품명
 
     @Column(nullable = false)
@@ -40,5 +41,4 @@ public class Product {
 
     @Column(columnDefinition = "TEXT")
     private String description;  // 물품 설명 (사용감, 기능 이상 여부 등)
-
 }

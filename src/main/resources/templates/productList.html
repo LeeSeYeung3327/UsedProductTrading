@@ -89,25 +89,27 @@
     <div class="category-filter mb-4 p-3">
         <h5 class="mb-3">카테고리</h5>
         <div class="d-flex flex-wrap">
-            <button class="btn btn-sm btn-outline-success filter-btn active">전체</button>
-            <button class="btn btn-sm btn-outline-success filter-btn">가전제품</button>
-            <button class="btn btn-sm btn-outline-success filter-btn">의류</button>
-            <button class="btn btn-sm btn-outline-success filter-btn">가구</button>
-            <button class="btn btn-sm btn-outline-success filter-btn">도서</button>
-            <button class="btn btn-sm btn-outline-success filter-btn">스포츠/레저</button>
-            <button class="btn btn-sm btn-outline-success filter-btn">디지털/IT</button>
-            <button class="btn btn-sm btn-outline-success filter-btn">생활용품</button>
+            <button class="btn btn-sm btn-outline-success filter-btn active" data-category="전체">전체</button>
+            <button class="btn btn-sm btn-outline-success filter-btn" data-category="뷰티/미용">뷰티/미용</button>
+            <button class="btn btn-sm btn-outline-success filter-btn" data-category="의류/잡화">의류/잡화</button>
+            <button class="btn btn-sm btn-outline-success filter-btn" data-category="가구/인테리어">가구/인테리어</button>
+            <button class="btn btn-sm btn-outline-success filter-btn" data-category="도서/티켓/음반">도서/티켓/음반</button>
+            <button class="btn btn-sm btn-outline-success filter-btn" data-category="스포츠/레저">스포츠/레저</button>
+            <button class="btn btn-sm btn-outline-success filter-btn" data-category="디지털/IT">디지털/IT</button>
+            <button class="btn btn-sm btn-outline-success filter-btn" data-category="취미/게임">취미/게임</button>
+            <button class="btn btn-sm btn-outline-success filter-btn" data-category="기타">기타</button>
         </div>
     </div>
 
     <!-- 상품 목록 동적 출력 -->
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-        <div th:each="product : ${products}" th:onclick="|window.location.href='/productDetail/' + ${product.id}|" class="col">
+        <div th:each="product : ${products}" th:onclick="|window.location.href='/productDetail/' + ${product.id}|" class="col" th:data-category="${product.category}">
             <div class="card product-card h-100">
                 <div class="position-relative">
                     <span class="badge bg-success condition-badge " th:text="${product.productCondition}"></span>
-                    <img th:src="@{${product.image != null ? product.image : '/default-image.jpg'}}" class="card-img-top" alt="물품 이미지"/>
-                </div>
+                    <img th:src="@{${product.image != null ? product.image : '/images/default-image.png'}}"
+                         class="card-img-top"
+                         alt="물품 이미지"/> </div>
                 <div class="card-body">
                     <h5 th:text="${product.title}" class="card-title"></h5>
                     <p th:text="${#numbers.formatInteger(product.price, 3, 'COMMA') + '원'}" class="card-price mb-2"></p>
@@ -115,16 +117,58 @@
                         서울시 강남구
                     </p>
                     <p class="seller-info d-flex justify-content-between">
-                        <span>판매자: 00님</span>
-                        <span>3일 전</span>
+                        <span>판매자</span>
+                        <span>3일전</span>
                     </p>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const filterButtons = document.querySelectorAll(".filter-btn");
+        const productContainers = document.querySelectorAll(".col");
+
+        let selectedCategory = "전체";
+
+        // 카테고리 버튼 클릭 이벤트
+        filterButtons.forEach(button => {
+            button.addEventListener("click", function() {
+                filterButtons.forEach(btn => btn.classList.remove("active"));
+                this.classList.add("active");
+                selectedCategory = this.getAttribute("data-category");
+
+                filterByCategory(); // 카테고리 필터링 함수 호출
+            });
+        });
+
+        // 카테고리 필터링 함수
+        function filterByCategory() {
+            productContainers.forEach(container => {
+                const productCategory = container.getAttribute("data-category");
+
+                // 카테고리가 "전체"일 때는 모든 상품 표시
+                const matchesCategory = (selectedCategory === "전체" || productCategory === selectedCategory);
+
+                if (matchesCategory) {
+                    // 카테고리에 맞는 요소들만 보이도록
+                    container.style.display = "block";
+                    container.style.position = "relative";  // 안정적인 위치 지정
+                    container.style.visibility = "visible"; // 요소가 보이도록 설정
+                    container.style.opacity = "1"; // 부드럽게 나타나도록
+                } else {
+                    // 숨기기 처리
+                    container.style.display = "none"; // display를 none으로 설정해 숨김
+                }
+            });
+        }
+    });
+</script>
+
+
+
 </body>
 </html>
 

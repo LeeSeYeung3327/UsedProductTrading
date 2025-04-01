@@ -105,7 +105,9 @@
 
                 <div class="row g-0">
                     <div class="col-md-6 bg-light">
-                        <img th:src="${product.image}" class="img-fluid w-100 h-100" alt="물품 이미지"
+                        <img th:src="@{${#strings.defaultString(product.image, '/images/default-image.png')}}"
+                             class="img-fluid w-100 h-100"
+                             alt="물품 이미지"
                              style="object-fit: cover; max-height: 500px;">
                     </div>
                     <div class="col-md-6">
