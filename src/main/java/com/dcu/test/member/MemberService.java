@@ -32,4 +32,10 @@ public class MemberService {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("해당 이메일의 회원을 찾을 수 없습니다."));
     }
+
+    // 회원 정보 수정
+    @Transactional
+    public void updateMember(Member member) {
+        memberRepository.save(member);
+    }
 }

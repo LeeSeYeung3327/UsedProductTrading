@@ -128,6 +128,17 @@
             flex: 1 0 100% !important; /* 화면 크기가 707px 이하일 때 한 줄에 하나씩 배치 */
         }
     }
+        .hover-effect {
+    display: block; /* 확실하게 적용 */
+    padding: 10px; /* 클릭 영역 증가 */
+}
+
+.hover-effect:hover {
+    background-color: #f8f9fa !important;
+    color: #28a745 !important;
+    border-radius: 8px;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
     </style>
 </head>
 <body>
@@ -136,7 +147,7 @@
 <nav th:replace="~{/fragments/header.html :: header}"></nav>
 
 <div class="container py-4" style="outline: none; user-select: none;">
-    <h1 class="mb-4 text-center header-title">🔄 중고 물품 목록</h1>
+    <h1 class="mb-4 text-center header-title">물품 목록</h1>
 
     <!-- 카테고리 필터 -->
     <div class="category-filter mb-4 p-3">
@@ -166,8 +177,11 @@
                 <div class="card-body">
                     <h5 th:text="${product.title}" class="card-title"></h5>
                     <p th:text="${#numbers.formatInteger(product.price, 3, 'COMMA') + '원'}" class="card-price mb-2"></p>
-                    <p class="location-info mb-1"></p>
-
+                    <div th:text="${product.category}" class="fs-6"></div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span th:text="${product.trade_method}" class="fs-6"></span>
+                        <span class="location-info mb-1 fs-6"></span>
+                    </div>
                 </div>
             </div>
         </div>

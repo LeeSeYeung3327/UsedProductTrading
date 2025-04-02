@@ -28,12 +28,6 @@ public class Member {
     private String profileImage;  // 프로필 사진 URL (null 가능)
 
     @Column(nullable = false)
-    private Double rating = 0.0;  // 거래 평점 (기본값 0.0)
-
-    @Column(nullable = false)
-    private Integer reviewCount = 0;  // 거래 후기 개수 (기본값 0)
-
-    @Column(nullable = false)
     private LocalDate joinDate;  // 가입일
 
     @Column(nullable = false)

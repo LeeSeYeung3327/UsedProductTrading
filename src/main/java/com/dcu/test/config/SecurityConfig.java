@@ -39,6 +39,6 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder(); // 대표 적인 해싱 기법
+        return new BCryptPasswordEncoder(); // 대표적인 해싱 기법
     }
 }

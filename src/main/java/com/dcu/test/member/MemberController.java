@@ -1,5 +1,7 @@
 package com.dcu.test.member;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 
@@ -96,4 +99,65 @@ public class MemberController {
         model.addAttribute("message", message);
         return "member/memberSignUp";
     }
+
+    // 프로필 수정 페이지 이동
+    @GetMapping("/memberEdit")
+    public String memberEdit(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        if (userDetails == null) {
+            return "redirect:/memberLogin";
+        }
+
+        Member member = memberService.findMemberByEmail(userDetails.getUsername());
+        model.addAttribute("member", member);
+        return "member/memberEdit";
+    }
+
+    // 프로필 수정 처리 후 강제 로그아웃
+    @PostMapping("/memberEdit")
+    public String memberEdit(@AuthenticationPrincipal UserDetails userDetails,
+                             HttpServletRequest request,
+                             @RequestParam String name,
+                             @RequestParam(required = false) String address,
+                             @RequestParam(required = false) String password,
+                             Model model) {
+        if (userDetails == null) {
+            return "redirect:/memberLogin";
+        }
+
+        Member member = memberService.findMemberByEmail(userDetails.getUsername());
+
+        if (name.isBlank()) {
+            model.addAttribute("message", "이름을 입력해주세요.");
+            model.addAttribute("member", member);
+            return "member/memberEdit";
+        }
+
+        member.setName(name);
+        member.setAddress(address);
+
+        // 비밀번호 변경 (입력값이 있을 경우에만)
+        if (password != null && !password.isBlank()) {
+            if (password.length() < 8) {
+                model.addAttribute("message", "비밀번호는 8자 이상이어야 합니다.");
+                model.addAttribute("member", member);
+                return "member/memberEdit";
+            }
+            member.setPassword(passwordEncoder.encode(password));
+        }
+
+        memberService.updateMember(member);
+
+        // 강제 로그아웃
+        try {
+            request.logout();
+        } catch (ServletException e) {
+            e.printStackTrace();
+        }
+
+        return "redirect:/memberLogin?updateSuccess"; // 수정 후 로그인 페이지로 이동
+    }
+
+
+
+
 }

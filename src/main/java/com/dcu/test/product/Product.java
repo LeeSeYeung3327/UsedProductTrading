@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import com.dcu.test.member.Member;
 
 @Entity
 @Getter

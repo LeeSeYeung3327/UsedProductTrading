@@ -1,96 +1,118 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>실시간 채팅</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <title>실시간 채팅 | 리마켓</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f8f9fa;
+      background-color: #f5f5f0;
+      font-family: 'Noto Sans KR', sans-serif;
     }
-
+    .chat-container {
+      max-width: 700px;
+      margin: auto;
+      background: #FFF;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+    .chat-title {
+      font-weight: bold;
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #3e4a3d;
+      text-align: center;
+    }
     .chat-box {
       height: 400px;
       overflow-y: auto;
       background-color: #ffffff;
       border-radius: 8px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 15px;
       margin-bottom: 20px;
     }
-
-    #messageArea {
-      list-style: none;
-      padding: 0;
-    }
-
     .message-item {
-      padding: 8px 10px;
+      padding: 10px;
       margin-bottom: 5px;
-      background-color: #f1f1f1;
-      border-radius: 5px;
+      border-radius: 10px;
+      font-size: 1rem;
     }
-
     .message-item.user {
-      background-color: #d1f7d1;
+      background-color: #e3fcef; /* 밝은 민트 */
+      text-align: right;
     }
-
     .message-item.other {
-      background-color: #f7d1d1;
+      background-color: #ffe8e8; /* 밝은 핑크 */
+      text-align: left;
     }
-
-    .input-group {
-      display: flex;
-    }
-
     .input-group input {
       border-radius: 20px 0 0 20px;
     }
-
     .input-group button {
       border-radius: 0 20px 20px 0;
     }
-
-    .container {
-      max-width: 800px;
-      margin-top: 40px;
+    .btn-send {
+      background-color: #4CAF50;
+      border-color: #4CAF50;
+      font-weight: bold;
     }
+    .btn-send:hover {
+      background-color: #3d8b40;
+      border-color: #3d8b40;
+    }
+    .hover-effect {
+    display: block; /* 확실하게 적용 */
+    padding: 10px; /* 클릭 영역 증가 */
+}
+
+.hover-effect:hover {
+    background-color: #f8f9fa !important;
+    color: #28a745 !important;
+    border-radius: 8px;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
   </style>
 </head>
 <body>
-<div class="container mt-5">
-  <h2 class="text-center">실시간 채팅</h2>
-  <div class="chat-box border p-3 mb-3">
-    <ul id="messageArea" class="list-unstyled"></ul>
-  </div>
-  <div class="input-group mb-2">
-    <input type="text" id="message" class="form-control" placeholder="메시지를 입력하세요..." />
-    <button class="btn btn-primary" onclick="sendMessage()">전송</button>
+
+<!-- Header -->
+<nav th:replace="~{/fragments/header.html :: header}"></nav>
+
+<!-- Main Content -->
+<div class="container py-5">
+  <div class="chat-container">
+    <h1 class="chat-title">실시간 채팅</h1>
+    <hr>
+
+    <div class="chat-box border p-3 mb-3">
+      <ul id="messageArea" class="list-unstyled"></ul>
+    </div>
+
+    <div class="input-group">
+      <input type="text" id="message" class="form-control" placeholder="메시지를 입력하세요..." />
+      <button class="btn btn-send" onclick="sendMessage()">전송</button>
+    </div>
   </div>
 </div>
 
-<!-- 동적으로 삽입된 데이터 속성 -->
-<!-- Thymeleaf를 사용하여 서버에서 전달된 memberName을 동적으로 출력 -->
+<!-- 채팅 정보 -->
 <div id="chatRoom" th:data-username="${memberName}" th:data-usercolor="${userColor}"></div>
-
 
 <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
 <script>
-  // 📌 URL에서 roomId 추출
   var roomId = window.location.pathname.split("/").pop();
   var username = document.getElementById('chatRoom').getAttribute('data-username');
   var userColor = document.getElementById('chatRoom').getAttribute('data-usercolor');
-
-  console.log("현재 채팅방:", roomId, "사용자:", username, "색상:", userColor);
 
   var userColors = {};
   var socket = new SockJS('/ws');
   var stompClient = Stomp.over(socket);
 
-  // 📌 채팅방 ID에 맞는 메시지 불러오기
   function loadChatHistory() {
-    fetch('/chat/' + roomId + '/messages')  // 📌 특정 채팅방의 메시지만 가져옴
+    fetch('/chat/' + roomId + '/messages')
       .then(response => response.json())
       .then(messages => {
         messages.forEach(chatMessage => {
@@ -105,22 +127,20 @@
     messageElement.classList.add('message-item');
 
     if (!userColors[sender]) {
-      userColors[sender] = sender === username ? userColor : getRandomColor();
+      userColors[sender] = sender === username ? "#e3fcef" : "#ffe8e8"; // 밝은 민트 / 밝은 핑크
     }
     messageElement.style.backgroundColor = userColors[sender];
-
     messageElement.textContent = sender + ": " + content;
     document.getElementById('messageArea').appendChild(messageElement);
   }
 
   stompClient.connect({}, function (frame) {
-    // 📌 각 채팅방에 맞는 구독 설정
     stompClient.subscribe('/topic/public/' + roomId, function (message) {
       var chatMessage = JSON.parse(message.body);
       displayMessage(chatMessage.sender, chatMessage.content);
     });
 
-    loadChatHistory();  // 📌 채팅 내역 불러오기
+    loadChatHistory();
   });
 
   function sendMessage() {
@@ -131,20 +151,12 @@
         content: messageContent,
         type: "CHAT"
       };
-      // 📌 각 채팅방에 맞게 메시지 전송
       stompClient.send("/app/chat.sendMessage/" + roomId, {}, JSON.stringify(chatMessage));
       document.getElementById('message').value = '';
     }
   }
-
-  function getRandomColor() {
-    var letters = '0123456789ABCDEF';
-    var color = '#';
-    for (var i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
-  }
 </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
