@@ -41,7 +41,15 @@ public class ProductController {
 
     @PostMapping("/productRegister")
     public String productRegister(@ModelAttribute ProductCreateDTO productCreateDTO) throws IOException {
-        String imagePath = fileService.imageSave(productCreateDTO.getImage());
+        String imagePath;
+
+        // 이미지가 없거나 비어 있으면 기본 이미지 사용
+        if (productCreateDTO.getImage() == null || productCreateDTO.getImage().isEmpty()) {
+            imagePath = "/images/default-image.png";  // 기본 이미지 경로
+        } else {
+            imagePath = fileService.imageSave(productCreateDTO.getImage()); // 업로드된 이미지 저장
+        }
+
         productService.productSave(productCreateDTO, imagePath);
         return "redirect:/productList";
     }

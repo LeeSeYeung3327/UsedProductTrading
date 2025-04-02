@@ -11,6 +11,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
         // /upload/images/** URL로 들어오는 요청을 실제 파일 시스템의 static/images/ 디렉토리로 매핑
         resourceHandlerRegistry
                 .addResourceHandler("/upload/images/**")
-                .addResourceLocations("file:./src/main/resources/static/images/"); // 실제 파일 경로로 변경
+                .addResourceLocations("file:C:/JAVA/test/uploads/images/"); // 실제 파일 경로로 변경
     }
 }
