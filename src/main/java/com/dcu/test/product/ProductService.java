@@ -6,11 +6,11 @@ import com.dcu.test.pakage.ProductDTO;
 import com.dcu.test.pakage.ProductUpdateDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,10 +19,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
-    private  final FileService fileService;
-    // 모든 상품 조회 메서드
-    public List<ProductDTO> productFindAll() {
-        return productRepository.findAll().stream().map(product -> {
+    private final FileService fileService;
+
+    // 모든 상품 조회 메서드 (페이징 적용)
+    public Page<ProductDTO> productFindAll(Pageable pageable) {
+        return productRepository.findAll(pageable).map(product -> {
             ProductDTO productDTO = new ProductDTO();
             productDTO.setId(product.getId());
             productDTO.setImage(product.getImage());
@@ -35,18 +36,16 @@ public class ProductService {
             productDTO.setTrade_method(product.getTrade_method());
             productDTO.setDescription(product.getDescription());
             return productDTO;
-        }).collect(Collectors.toList());
+        });
     }
 
-    // 검색 기능 추가
-    public List<ProductDTO> productSearch(String keyword) {
-        List<Product> products;
-        if (keyword != null && !keyword.trim().isEmpty()){
-            products = productRepository.findByTitleContainingIgnoreCase(keyword);
-        } else {
-            products = productRepository.findAll();
-        }
-        return products.stream().map(product -> {
+    // 검색 기능 추가 (페이징 적용)
+    public Page<ProductDTO> productSearch(String keyword, Pageable pageable) {
+        Page<Product> products = (keyword != null && !keyword.trim().isEmpty())
+                ? productRepository.findByTitleContainingIgnoreCase(keyword, pageable)
+                : productRepository.findAll(pageable);
+
+        return products.map(product -> {
             ProductDTO productDTO = new ProductDTO();
             productDTO.setId(product.getId());
             productDTO.setImage(product.getImage());
@@ -59,20 +58,20 @@ public class ProductService {
             productDTO.setTrade_method(product.getTrade_method());
             productDTO.setDescription(product.getDescription());
             return productDTO;
-        }).collect(Collectors.toList());
+        });
     }
 
-    public void productUpdate(ProductUpdateDTO productUpdateDTO){
+    public void productUpdate(ProductUpdateDTO productUpdateDTO) {
         Product product = productRepository.findById(productUpdateDTO.getId())
-                .orElseThrow(()->new NoSuchElementException("상품이 존재하지 않습니다."));
+                .orElseThrow(() -> new NoSuchElementException("상품이 존재하지 않습니다."));
 
         String imagePath = productUpdateDTO.getOriginalImage();
-        if(productUpdateDTO.getImage() != null && !productUpdateDTO.getImage().isEmpty()){
-            try{
+        if (productUpdateDTO.getImage() != null && !productUpdateDTO.getImage().isEmpty()) {
+            try {
                 fileService.fileDelete(String.valueOf(Paths.get(productUpdateDTO.getOriginalImage()).getFileName()));
                 imagePath = fileService.imageSave(productUpdateDTO.getImage());
-            } catch(IOException e){
-                throw new RuntimeException("이미지 처리 중 오류 발생",e);
+            } catch (IOException e) {
+                throw new RuntimeException("이미지 처리 중 오류 발생", e);
             }
         }
 
@@ -87,10 +86,7 @@ public class ProductService {
         product.setProductCondition(productUpdateDTO.getProductCondition());
 
         productRepository.save(product);
-
     }
-
-
 
     // 상품 저장 메서드
     public void productSave(ProductCreateDTO productCreateDTO, String imagePath) {
@@ -130,6 +126,4 @@ public class ProductService {
     public void productDelete(Long id) {
         productRepository.deleteById(id);
     }
-
-
 }
