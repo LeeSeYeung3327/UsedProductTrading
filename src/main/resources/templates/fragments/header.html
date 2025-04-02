@@ -35,13 +35,18 @@
                 </li>
             </ul>
 
-            <!-- 로그인 상태 메뉴를 한 줄로 정렬 -->
-            <div class="d-flex justify-content-center align-items-center gap-3 w-100 mt-2" sec:authorize="isAuthenticated()">
-                <span class="nav-link text-dark fw-semibold">👋 <span sec:authentication="name"></span>님</span>
-                <a href="/memberPage" class="btn btn-outline-success fw-semibold px-3">마이페이지</a>
-                <form action="/logout" method="post" class="d-inline">
-                    <button type="submit" class="btn btn-danger fw-semibold px-3">로그아웃</button>
-                </form>
+            <!-- 로그인 상태 메뉴 -->
+            <div class="d-flex flex-column align-items-center w-100 mt-2" sec:authorize="isAuthenticated()">
+                <!-- 이름 출력 (한 줄 띄우기 위해 mb-2 추가) -->
+                <div class="nav-link text-dark fw-semibold mb-2">👋 <span sec:authentication="name"></span>님</div>
+
+                <!-- 마이페이지 & 로그아웃 버튼을 한 줄로 배치 -->
+                <div class="d-flex gap-2">
+                    <a href="/memberPage" class="btn btn-outline-success fw-semibold px-3">마이페이지</a>
+                    <form action="/logout" method="post">
+                        <button type="submit" class="btn btn-danger fw-semibold px-3">로그아웃</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
