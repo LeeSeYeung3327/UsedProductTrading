@@ -22,14 +22,14 @@ public class ChatController {
     private MemberService memberService;
 
     @Autowired
-    private ChatService chatMessageService;  // 메시지 저장 서비스
+    private ChatService chatMessageService;
 
     @Autowired
-    private UserColorManager userColorManager;  // 사용자별 랜덤 색상 관리
+    private UserColorManager userColorManager;  // 사용자 색상 관리
 
     // 메시지를 받으면 저장 후 브로드캐스트
-    @MessageMapping("/chat.sendMessage/{roomId}")  // 📌 방 ID 포함
-    @SendTo("/topic/public/{roomId}")  // 📌 특정 채팅방에만 전송
+    @MessageMapping("/chat.sendMessage/{roomId}")
+    @SendTo("/topic/public/{roomId}")
     public ChatMessage sendMessage(@DestinationVariable String roomId, ChatMessage message) {
         message.setRoomId(roomId);
         message.setTimestamp(LocalDateTime.now());
@@ -46,7 +46,7 @@ public class ChatController {
         // 사용자 정보 조회
         Member member = memberService.findMemberByEmail(email);
         String memberName = member.getName();
-        String userColor = userColorManager.getUserColor(memberName);  // 랜덤 색상 부여
+        String userColor = userColorManager.getUserColor(memberName);  // 사용자 색상 부여
 
         model.addAttribute("roomId", roomId);
         model.addAttribute("memberName", memberName);
@@ -55,7 +55,7 @@ public class ChatController {
         return "chat";
     }
 
-    // 저장된 채팅 메시지 반환 API (채팅방 입장 시 호출)
+    // 저장된 채팅 메시지 반환 API
     @GetMapping("/chat/{roomId}/messages")
     @ResponseBody
     public List<ChatMessage> getMessagesByRoomId(@PathVariable String roomId) {

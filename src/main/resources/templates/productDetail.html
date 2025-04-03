@@ -101,8 +101,7 @@
                         </svg>
                     </div>
                     <div>
-                        <p class="seller-name">판매자명</p>
-                        <p class="seller-location">서울시 강남구</p>
+                        <span class="location-info mb-1 fs-6"></span>
                     </div>
                     <div class="ms-auto">
                         <a class="btn btn-sm btn-outline-success" th:href="@{/chat/{id}(id=${product.id})}">
@@ -173,6 +172,48 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
+
+<script>
+    function getLocation() {
+    const cityTranslations = {
+        "Seoul": "서울",
+        "Busan": "부산",
+        "Incheon": "인천",
+        "Daegu": "대구",
+        "Daejeon": "대전",
+        "Gwangju": "광주",
+        "Ulsan": "울산",
+        "Suwon": "수원",
+        "Changwon": "창원",
+        "Seongnam": "성남",
+        "Goyang": "고양",
+        "Yongin": "용인",
+        "Cheongju": "청주",
+        "Jeonju": "전주",
+        "Jeju": "제주",
+        "Anyang": "안양",
+    };
+
+    fetch('http://ip-api.com/json/?lang=ko')
+        .then(response => response.json())
+        .then(data => {
+            let translatedCity = cityTranslations[data.city] || data.city;
+
+            // 모든 location-info 요소 업데이트
+            document.querySelectorAll(".location-info").forEach(element => {
+                element.innerHTML = translatedCity;
+            });
+        })
+        .catch(error => {
+            document.querySelectorAll(".location-info").forEach(element => {
+                element.innerHTML = "위치 정보를 가져올 수 없습니다.";
+            });
+        });
+}
+
+getLocation();
+
+</script>
 </body>
 </html>
 

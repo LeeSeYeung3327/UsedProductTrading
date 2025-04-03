@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class ChatMessage {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)  // 기본 키 자동 생성
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String sender;

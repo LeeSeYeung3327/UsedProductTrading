@@ -116,21 +116,34 @@
         color: white;
         border-color: #4CAF50;
     }
-     /* 화면 크기가 980px 이하일 때, 한 줄에 두 개씩 배치 */
-    @media (max-width: 992px) {
-        .row .col {
-            flex: 1 0 48%; /* 화면 크기가 980px 이하일 때 한 줄에 두 개씩 배치 */
-        }
+    /* 화면 크기가 992px 이하일 때, 한 줄에 두 개씩 배치 */
+/* 화면 크기가 992px 이하일 때, 한 줄에 두 개씩 배치 */
+@media (max-width: 992px) {
+    .row {
+        display: flex;
+        flex-wrap: wrap; /* 요소들이 줄 바꿈 할 수 있도록 설정 */
     }
-    /* 화면 크기가 707px 이하일 때, 한 줄에 하나씩 배치 */
-    @media (max-width: 767.5px) {
-        .row .col {
-            flex: 1 0 100% !important; /* 화면 크기가 707px 이하일 때 한 줄에 하나씩 배치 */
-        }
+
+    .row .col {
+        flex: 0 0 48%; /* 한 줄에 두 개씩 배치 */
+        margin-bottom: 16px; /* 아래쪽에 간격 추가 */
     }
-        .hover-effect {
-    display: block; /* 확실하게 적용 */
-    padding: 10px; /* 클릭 영역 증가 */
+
+    /* 마지막 요소에 여백을 주지 않도록 처리 */
+    .row .col:nth-child(2n) {
+        margin-right: 4%; /* 오른쪽 여백 추가 */
+    }
+
+    .row .col:nth-child(2n+1) {
+        margin-right: 0; /* 홀수 번째 요소 오른쪽 여백 제거 */
+    }
+}
+
+/* 화면 크기가 767.5px 이하일 때, 한 줄에 하나씩 배치 */
+@media (max-width: 767.5px) {
+    .row .col {
+        flex: 0 0 100%; /* 한 줄에 하나씩 배치 */
+    }
 }
 
 .hover-effect:hover {
